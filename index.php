@@ -76,16 +76,23 @@
 	while(isset($elements_to_compare[$iter])){
 		$row = DataBase::getRecordById($elements_to_compare[$iter][1]);
 		var_dump($row);
+		$row[3]="kure";
 		var_dump($elements_to_compare[$iter]);
-
-		$diff = new Horde_Text_Diff('auto', array($elements_to_compare,$row));
-		$renderer = new Horde_Text_Diff_Renderer_Inline($diff);
-		echo $renderer->render($diff);
-		/*$update_elements .= "out[".$iter."][".$jter."] = ".$renderer->render($diff).PHP_EOL;*/
-		
+		$jter=0;
+		foreach ($row as $r) {
+			$diff = new Horde_Text_Diff('auto', array(array($elements_to_compare[$iter][$jter]), array($row[$jter])));
+			$renderer = new Horde_Text_Diff_Renderer_Inline($diff);
+			if($renderer->render($diff)){
+				$update_elements .= "out[".$iter."][".$jter."] = ".$renderer->render($diff).PHP_EOL;
+			}else
+			{
+				$update_elements .= "out[".$iter."][".$jter."] = ".$elements_to_compare[$iter][$jter].PHP_EOL;
+			}
+			$jter++;
+		}
 		$iter++;
 	}
-	echo "u\n";
+	
 	var_dump($update_elements);
 
 /*------------------------------------------------------------------------------------------*/
